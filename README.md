@@ -17,7 +17,7 @@ from reservation
 ```
 
 reservations_count|
----
+-|
 2501|
 
 ```sql
@@ -208,11 +208,11 @@ CN|Early - 21 days|30%
 
 ### 2) What are the typical guests who do online check-in? Is it somehow different when you compare reservations created across different weekdays (table `reservation`, `IsOnlineCheckin` column)?
 
-:construction: [...In Construction...] :construction:
+:construction: ...In Construction... :construction:
 
 ### 3) Look at the average night cost per single occupied capacity. What guest segment is the most profitable per occupied space unit? And what guest segment is the least profitable?
 
-:construction: [...In Construction...] :construction:
+:construction: ...In Construction... :construction:
 
 ## Part 2 Power BI Report for Project Manager
 
