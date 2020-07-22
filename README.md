@@ -277,30 +277,40 @@ reservation_agegroup|reservations_count|total_reservations|reservations_share_pe
 
 The distribution among age brackets is uniform with the exception of **65** `agegroup`.
 
-#### `xxx and Online Checkin for Gender 1`
+#### `NationalityCode and Online Checkin for Gender 1`
 
 ```sql
 SELECT
 reservation.NationalityCode AS reservation_nationality_code,
-COUNT(*) AS reservations_count,
-SUM(COUNT(*)) OVER () As total_reservations,
-100*count(*)/sum(count(*)) OVER () AS reservations_share_per_country
+COUNT(*) AS checkin_count,
+AVG(country_reservations.country_sum) AS total_reservations_nationality
 FROM reservation
+LEFT JOIN (
+    --subquery to calculate country totals
+    SELECT
+    NationalityCode,
+	COUNT(*) AS country_sum
+	FROM reservation
+	GROUP BY NationalityCode
+	) AS country_reservations
+	ON reservation.NationalityCode = country_reservations.NationalityCode
 WHERE
-IsOnlineCheckin = 1
+reservation.IsOnlineCheckin = 1
 AND reservation.gender = 1
-
 GROUP BY reservation.NationalityCode
-ORDER BY 2 DESC
+ORDER BY total_reservations_nationality DESC
 ```
 
-reservation_nationality_code|reservations_count|total_reservations|reservations_share_per_country
--|-|-|-
-US|18|119|15
-GB|17|119|14
-...|...|...|...
+reservation_nationality_code|checkin_count|total_reservations_nationality
+-|-|-
+US|18|243
+GB|17|187
+DE|6|154
+...|...|...
 
+No country
 
+[ ] comment on the analysis outcome
 
 ### 3) Look at the average night cost per single occupied capacity. What guest segment is the most profitable per occupied space unit? And what guest segment is the least profitable?
 
