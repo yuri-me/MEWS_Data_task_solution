@@ -238,6 +238,7 @@ FROM reservation
 WHERE
 IsOnlineCheckin = 1
 AND reservation.gender != 0
+
 GROUP BY reservation.gender
 ORDER BY reservation_gender
 ```
@@ -297,6 +298,7 @@ LEFT JOIN (
 WHERE
 reservation.IsOnlineCheckin = 1
 AND reservation.gender = 1
+
 GROUP BY reservation.NationalityCode
 ORDER BY total_reservations_nationality DESC
 ```
@@ -308,7 +310,32 @@ GB|17|187
 DE|6|154
 ...|...|...
 
-No country
+No country has a significant share of online reservations.
+
+#### `Weekday and Online Checkin for Gender 1`
+
+With a given low number of online check-ins, slicing by agegroup did not reveal any worth-mentioning trends.
+
+
+[ ] replace code with one excluding agegroup and showing total number per agegroup w/wo online checkins
+
+```sql
+--ensure week starts on Monday
+SET DATEFIRST 1
+
+SELECT
+agegroup,
+DATEPART(weekday, CreatedUtc) AS weekday_datepart,
+COUNT(*) AS reservations_count
+FROM reservation
+--narrow down to single gender
+WHERE IsOnlineCheckin = 1
+AND gender = 1
+AND agegroup NOT IN (0, 65, 100)
+
+GROUP BY agegroup, DATEPART(WEEKDAY, CreatedUtc)
+ORDER BY agegroup
+```
 
 [ ] comment on the analysis outcome
 
