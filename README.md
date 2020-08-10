@@ -1,5 +1,16 @@
 # MEWS Data Task Solution
 
+The premium hotel prospers with crafting personalized experience to each guest. The hotel manager wants to learn more about the customers and asks you to analyse reservations of his hotel.
+Using only SQL, the task is to 
+
+
+1) 
+2) 
+
+
+[ ] what will be intro?
+[ ] use reference to MEWS original task
+
 The task itself is located at [MewsSystems depository](https://github.com/MewsSystems/developers/tree/master/DataScience#mews-data-analyst-task).
 
 The data was imported into local SQL database with tables "rate" and "reservation".
@@ -312,37 +323,59 @@ DE|6|154
 
 No country has a significant share of online reservations.
 
-#### `Weekday and Online Checkin for Gender 1`
+#### `Impact of booking weekday on customer segment which prefers online checkin`
 
-With a given low number of online check-ins, slicing by agegroup did not reveal any worth-mentioning trends.
-
-
-[ ] replace code with one excluding agegroup and showing total number per agegroup w/wo online checkins
+So far we have identified that clients with `gender` **1** and `agegroup` within **(25,35,45,55)** use option of online checkin most often. In order to examine if booking weekday impacts this customer segment, we will look for total number of online checkins by booking day of the week.
 
 ```sql
---ensure week starts on Monday
 SET DATEFIRST 1
 
 SELECT
-agegroup,
-DATEPART(weekday, CreatedUtc) AS weekday_datepart,
-COUNT(*) AS reservations_count
+weekday_segment_checkin.*,
+weekday_all_checkin.checking_all_count
+FROM (
+-- segmented online checkins per weekday
+SELECT
+DATEPART(weekday, reservation.CreatedUtc) AS weekday_datepart,
+COUNT(reservation.CreatedUtc) AS checkin_segment_count
 FROM reservation
---narrow down to single gender
-WHERE IsOnlineCheckin = 1
-AND gender = 1
-AND agegroup NOT IN (0, 65, 100)
-
-GROUP BY agegroup, DATEPART(WEEKDAY, CreatedUtc)
-ORDER BY agegroup
+WHERE
+reservation.IsOnlineCheckin = 1
+AND reservation.gender = 1
+AND reservation.agegroup NOT IN (0, 65, 100)
+GROUP BY DATEPART(weekday, CreatedUtc)
+) AS weekday_segment_checkin
+-- all online checkins per weekday
+INNER JOIN  
+ (SELECT
+    DATEPART(weekday, reservation.CreatedUtc) AS weekday_datepart,
+	COUNT(reservation.CreatedUtc) AS checking_all_count
+	FROM reservation
+	WHERE
+	reservation.IsOnlineCheckin = 1
+GROUP BY DATEPART(weekday, CreatedUtc)
+)AS weekday_all_checkin
+	ON weekday_segment_checkin.weekday_datepart = weekday_all_checkin.weekday_datepart
 ```
 
-[ ] comment on the analysis outcome
+weekday_datepart|checkin_segment_count|checking_all_count
+--|--|--
+1|17|26
+2|21|27
+3|17|24
+4|17|24
+5|15|17
+6|14|18
+7|11|12
 
-### 3) Look at the average night cost per single occupied capacity. What guest segment is the most profitable per occupied space unit? And what guest segment is the least profitable?
+Share of reservations with online checkins done by the defined segment constitutes around 75% of all bookings with online checkins regardless of customer type. The defined customer segment holds accross different weekdays.
 
-:construction: ...In Construction... :construction:
+----
+Extra notes
+From the first sight it might appear that number of online checkins decreases toward weekend. Evaluating online checkins and all reservations for `gender` **1** and `agegroup` **25, 35, 45, 55**, it comes clear high share of online checkins for bookings done on Saturday and Sunday (weekdays 6 and 7 respectively).
 
-## Part 2 Power BI Report for Project Manager
+Is it somehow different when you compare reservations created across different weekdays (table `reservation`, `IsOnlineCheckin` column)?
 
-[The report](https://github.com/yuri-me/MEWS_Data_task_solution/blob/master/MEWS%20Hotel%20Reservations%20Analysis.pbix) is a prototype to be discussed with Project Manager before developing final version. Focus is on the key visuals and insights they provide.
+Our search for customer segments moves to booking day of the week category.
+
+A quick examination of online check-ins in terms of agegroup AND order weekdays does not hold any trends.
