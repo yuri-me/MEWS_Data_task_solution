@@ -1,21 +1,25 @@
 # MEWS Data Task Solution
 
-The premium hotel prospers with crafting personalized experience to each guest. The hotel manager wants to learn more about the customers and asks you to analyse reservations of his hotel.
-Using only SQL, the task is to 
+The premium hotel prospers with crafting personalized experience to each guest. The hotel manager wants to learn more about the customers and asks to analyse reservations of his hotel.
+Using only SQL, the task is to report on the following:
 
+- What are the popular choices of booking rates (table `rate`, columns `ShortRateName` or `RateName`) for different segments of customers (table `reservation`, columns `AgeGroup`, `Gender`, `NationalityCode`)?
 
-1) 
-2) 
+- What are the typical guests who do online check-in? Is it somehow different when you compare reservations created across different weekdays (table `reservation`, `IsOnlineCheckin` column)?
 
+The briefing is a shortened version of the [data analyst task crafted by Mews Systems](https://github.com/MewsSystems/developers/tree/master/DataScience#mews-data-analyst-task).
 
-[ ] what will be intro?
-[ ] use reference to MEWS original task
+[ ] data disclaimer / I direcly refer to source of the data.
 
-The task itself is located at [MewsSystems depository](https://github.com/MewsSystems/developers/tree/master/DataScience#mews-data-analyst-task).
+## Assets
 
+Two CSV files `rates` and `reservations` that you can load into SQL database, or you can use `import_mssql.sql` file that contains the same data in the form of queries to create the db tables and insert all the data.
+
+All asset rights belong to Mews Systems. The data is used to exemplify SQL queries.
+
+[ ] add links to my gist
+[ ] Continue here
 The data was imported into local SQL database with tables "rate" and "reservation".
-
-## Part 1 SQL Queries for Tech Lead
 
 ### 1) What are the popular choices of booking rates (table `rate`, columns `ShortRateName` or `RateName`) for different segments of customers (table `reservation`, columns `AgeGroup`, `Gender`, `NationalityCode`)?
 
